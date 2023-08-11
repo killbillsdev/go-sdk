@@ -4,7 +4,7 @@ publish: install build test reindex
 
 reindex:
 	@echo "Publishing new version ! ..."
-	git tag $(version) && git push origin v$(version) && GOPROXY=proxy.golang.org go list -m github.com/killbillsdev/go_sdk@v$(version)
+	git tag v$(version) && git push origin v$(version) && GOPROXY=proxy.golang.org go list -m github.com/killbillsdev/go_sdk@v$(version)
 	@echo "Done"
 
 install:
