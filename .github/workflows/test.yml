@@ -17,4 +17,5 @@ jobs:
       - name: Build
         run: go build -v ./...
       - name: Test with the Go CLI
+        working-directory: go_sdk/__tests__
         run: go test
