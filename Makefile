@@ -19,7 +19,7 @@ build:
 
 test:
 	@echo "Testing..."
-	cd go_sdk && go test
+	cd go_sdk/__tests__ && go test
 	@echo "Done"
 
 .DEFAULT_GOAL := install
