@@ -1,49 +1,58 @@
 package go_sdk
 
 import (
+    "fmt"
+    "net/http"
 	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"net/http"
+    "io/ioutil"
 )
 
-func GetStores(env string, apiKey string) ([]map[string]interface{}, error) {
-	if env == "" {
-		return nil, fmt.Errorf("No environment specified")
-	}
-	if apiKey == "" {
-		return nil, fmt.Errorf("No API key provided")
-	}
+func GetStores(env string, apiKey string) ([]interface{}, error) {
+    if env == "" || apiKey == "" {
+        return nil, fmt.Errorf("No environment specified or API key provided")
+    }
 
-	client := &http.Client{}
-	url := fmt.Sprintf("https://w.%skillbills.%s/stores", env, "co")
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
+    var baseURL string
+    if env == "prod" {
+        baseURL = "https://w.killbills.co"
+    } else {
+        baseURL = fmt.Sprintf("https://w.%s.killbills.dev", env)
+    }
 
-	req.Header.Set("Authorization", apiKey)
+    url := fmt.Sprintf("%s/stores", baseURL)
 
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
+    req, err := http.NewRequest("GET", url, nil)
+    if err != nil {
+        return nil, err
+    }
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
+    req.Header.Set("Authorization", apiKey)
 
-	var result map[string]interface{}
-	if err := json.Unmarshal(body, &result); err != nil {
-		return nil, err
-	}
+    client := http.Client{}
+    resp, err := client.Do(req)
+    if err != nil {
+        return nil, err
+    }
+    defer resp.Body.Close()
 
-	items, ok := result["items"].([]map[string]interface{})
-	if !ok {
-		return nil, fmt.Errorf("Failed to parse response")
-	}
+    body, err := ioutil.ReadAll(resp.Body)
+    if err != nil {
+        return nil, err
+    }
 
-	return items, nil
+    // Parse the JSON response
+    var data map[string]interface{}
+    if err := json.Unmarshal(body, &data); err != nil {
+        return nil, err
+    }
+
+    items, ok := data["items"].([]interface{})
+    if !ok {
+        return nil, fmt.Errorf("Response does not contain 'items'")
+    }
+
+    return items, nil
 }
+
+
+
