@@ -3,6 +3,7 @@ package go_sdk
 import (
 	"time"
 	"encoding/json"
+
 	"github.com/go-playground/validator/v10"
 )
 
@@ -65,13 +66,13 @@ type Merchant struct {
 }
 
 type Store struct {
-	StoreName         string   `validate:"required"`
-	ReferenceID       string   `validate:"required"`
-	BillingDescriptor string   `validate:"required"`
-	Siret             string   `validate:"required"`
-	CodeApe           string   `validate:""`
-	TvaIntra          string   `validate:""`
-	Address           Address  `validate:"required"`
+	StoreName         string  `validate:"required"`
+	ReferenceID       string  `validate:"required"`
+	BillingDescriptor string  `validate:"required"`
+	Siret             string  `validate:"required"`
+	CodeApe           string  `validate:""`
+	TvaIntra          string  `validate:""`
+	Address           Address `validate:"required"`
 }
 
 type Address struct {
@@ -90,27 +91,27 @@ type Tax struct {
 }
 
 type Item struct {
-	ReferenceID  string `validate:""`
-	Name         string `validate:"required"`
-	Description  string `validate:""`
-	Type         string `validate:""`
-	Quantity     int    `validate:"required"`
-	Price        float64 `validate:"required"`
-	Discount     float64 `validate:""`
-	TotalAmount  float64 `validate:""`
-	Tax          Tax     `validate:"required"`
-	Subitems     []Subitem `validate:""`
+	ReferenceID string    `validate:""`
+	Name        string    `validate:"required"`
+	Description string    `validate:""`
+	Type        string    `validate:""`
+	Quantity    int       `validate:"required"`
+	Price       float64   `validate:"required"`
+	Discount    float64   `validate:""`
+	TotalAmount float64   `validate:""`
+	Tax         Tax       `validate:"required"`
+	Subitems    []Subitem `validate:""`
 }
 
 type Subitem struct {
-	ReferenceID  string `validate:""`
-	Name         string `validate:"required"`
-	Description  string `validate:""`
-	Quantity     int    `validate:""`
-	Price        float64 `validate:""`
-	Discount     float64 `validate:""`
-	TotalAmount  float64 `validate:""`
-	Tax          Tax     `validate:"required"`
+	ReferenceID string  `validate:""`
+	Name        string  `validate:"required"`
+	Description string  `validate:""`
+	Quantity    int     `validate:""`
+	Price       float64 `validate:""`
+	Discount    float64 `validate:""`
+	TotalAmount float64 `validate:""`
+	Tax         Tax     `validate:"required"`
 }
 
 func ValidateTransactionPayload(data []byte) bool {
