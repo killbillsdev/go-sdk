@@ -70,7 +70,6 @@ func TestValidateTransactionPayload_Valid(t *testing.T) {
 }
 
 func TestValidateTransactionPayload_Invalid(t *testing.T) {
-	LoadEnv()
 	invalidTransaction := Transaction{
 		// ... Populate fields with invalid data ...
 	}
