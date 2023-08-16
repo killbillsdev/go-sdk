@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+
 	"github.com/go-playground/validator/v10"
 )
 
@@ -74,6 +75,7 @@ type Store struct {
 	CodeAPE           string  `json:"code_ape"`
 	TVAIntra          string  `json:"tva_intra"`
 	Address           Address `json:"address" validate:"required"`
+
 }
 
 type Address struct {
@@ -113,6 +115,7 @@ type SubItem struct {
 	Discount    float64 `json:"discount"`
 	TotalAmount float64 `json:"total_amount"`
 	Tax         Tax     `json:"tax"`
+
 }
 
 func ValidateTransactionPayload(data []byte) bool {
