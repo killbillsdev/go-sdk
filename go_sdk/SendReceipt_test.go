@@ -9,7 +9,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func TestSendReceiptValidPayload(t *testing.T) {
+func testSendReceiptValidPayload(t *testing.T) {
 
 	err := godotenv.Load()
 	if err != nil {

@@ -2,12 +2,9 @@ package go_sdk
 
 import (
 	"encoding/json"
-	"fmt"
-	"os"
 	"testing"
 	"time"
 
-	"github.com/joho/godotenv"
 )
 
 func TestValidateTransactionPayload_Valid(t *testing.T) {
@@ -85,12 +82,7 @@ func TestValidateTransactionPayload_Invalid(t *testing.T) {
 }
 
 func TestValidateReceiptPayload_Valid(t *testing.T) {
-
-	err := godotenv.Load()
-	if err != nil {
-		fmt.Println("Erreur lors du chargement du fichier .env:", err)
-		os.Exit(1)
-	}
+	
 
 	var validPayload2 = map[string]interface{}{
 		"date": "2023-07-30T09:04:08",
@@ -198,14 +190,11 @@ func TestValidateReceiptPayload_Valid(t *testing.T) {
 				"transaction_date": "2023-07-30T09:04:08",
 			},
 		},
-		"partner_name": os.Getenv("TEST_POS_PARTNER_NAME"),
+		"partner_name": "any",
 		"reference_id": "1221554511",
 	}
 
-	if err != nil {
-		t.Errorf("Error marshaling JSON: %v", err)
-		return
-	}
+	
 
 	jsonData, _ := json.Marshal(validPayload2)
 
