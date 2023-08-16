@@ -8,11 +8,29 @@ import (
 
 func testSendBankingTransaction(t *testing.T){
 	constantTime := time.Date(2023, time.August, 14, 12, 0, 0, 0, time.UTC)
-	validTransaction := Transaction{
+	validTransaction := struct {
+		Bank_id      string `json:"bank_id"`
+		Transaction  struct {
+			Siret             string    `json:"siret" validate:"number"`
+			Amount            int       `json:"amount" validate:"required,gt=0"`
+			Payment           Payment   `json:"payment" validate:"required"`
+			Currency          string    `json:"currency" validate:"required,oneof=EUR USD"`
+			StoreName         string    `json:"store_name" validate:"required"`
+			CustomerID        string    `json:"customer_id" validate:"required"`
+			MerchantID        string    `json:"merchant_id" validate:"required"`
+			ReferenceID       string    `json:"reference_id" validate:"required"`
+			MerchantName      string    `json:"merchant_name" validate:"required"`
+			TransactionDate   time.Time `json:"transaction_date" validate:"required"`
+			BillingDescriptor string    `json:"billing_descriptor" validate:"required"`
+		} `json:"transaction"`
+		CallbackURL   string `json:"callback_url"`
+		PartnerName   string `json:"partner_name"`
+		ReceiptFormat string `json:"receipt_format"`
+	}{
 		Bank_id: "fbec0cb5-91c8-4b8b-a194-c018fbfe258d",
 		Transaction: struct {
 			Siret             string    `json:"siret" validate:"number"`
-			Amount            float64   `json:"amount" validate:"required,gt=0"`
+			Amount            int       `json:"amount" validate:"required,gt=0"`
 			Payment           Payment   `json:"payment" validate:"required"`
 			Currency          string    `json:"currency" validate:"required,oneof=EUR USD"`
 			StoreName         string    `json:"store_name" validate:"required"`
@@ -23,8 +41,8 @@ func testSendBankingTransaction(t *testing.T){
 			TransactionDate   time.Time `json:"transaction_date" validate:"required"`
 			BillingDescriptor string    `json:"billing_descriptor" validate:"required"`
 		}{
-			Siret: "123456789",
-			Amount: 100.0,
+			Siret:             "123456789",
+			Amount:            100,
 			Payment: Payment{
 				Bin: "123",
 			},
@@ -41,6 +59,7 @@ func testSendBankingTransaction(t *testing.T){
 		PartnerName:   "mooncard",
 		ReceiptFormat: "PDF",
 	}
+	
 	transactionData, err := json.Marshal(validTransaction)
 	if err != nil {
 		t.Fatalf("Failed to marshal transaction data: %v", err)
