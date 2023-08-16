@@ -1,8 +1,10 @@
 package go_sdk
 
 import (
-	"time"
 	"encoding/json"
+	"fmt"
+	"time"
+
 
 	"github.com/go-playground/validator/v10"
 )
@@ -10,7 +12,7 @@ import (
 var validate *validator.Validate
 
 func init() {
-    validate = validator.New()
+	validate = validator.New()
 }
 
 type Payment struct {
@@ -22,10 +24,10 @@ type Payment struct {
 }
 
 type Transaction struct {
-	Bank_id   string `json:"bank_id" validate:"required"`
+	Bank_id     string `json:"bank_id" validate:"required"`
 	Transaction struct {
 		Siret             string    `json:"siret" validate:"number"`
-		Amount            float64   `json:"amount" validate:"required,gt=0"`
+		Amount            int       `json:"amount" validate:"required"`
 		Payment           Payment   `json:"payment" validate:"required"`
 		Currency          string    `json:"currency" validate:"required,oneof=EUR USD"`
 		StoreName         string    `json:"store_name" validate:"required"`
@@ -36,82 +38,84 @@ type Transaction struct {
 		TransactionDate   time.Time `json:"transaction_date" validate:"required"`
 		BillingDescriptor string    `json:"billing_descriptor" validate:"required"`
 	} `json:"transaction" validate:"required"`
-	CallbackURL    string `json:"callback_url" validate:"required"`
-	PartnerName    string `json:"partner_name" validate:"required"`
-	ReceiptFormat  string `json:"receipt_format" validate:"required"`
+	CallbackURL   string `json:"callback_url" validate:"required"`
+	PartnerName   string `json:"partner_name" validate:"required"`
+	ReceiptFormat string `json:"receipt_format" validate:"required"`
 }
 type ReceiptPayload struct {
-	ReferenceID    string     `validate:"required"`
-	Amount         float64    `validate:"required"`
-	TotalTaxAmount float64    `validate:""`
-	Currency       string     `validate:"required,oneof=EUR USD"`
-	Date           string     `validate:"required"`
-	Covers         int        `validate:""`
-	Table          string     `validate:""`
-	Invoice        int        `validate:""`
-	TotalDiscount  float64    `validate:""`
-	Mode           string     `validate:""`
-	PartnerName    string     `validate:"required"`
-	Merchant       Merchant   `validate:"required"`
-	Store          Store      `validate:"required"`
-	Taxes          []Tax      `validate:""`
-	Items          []Item     `validate:"required"`
-	Payments       []Payment  `validate:"required"`
+	ReferenceID    string    `json:"reference_id" validate:"required"`
+	Amount         float64   `json:"amount" validate:"required"`
+	TotalTaxAmount float64   `json:"total_tax_amount"`
+	Currency       string    `json:"currency" validate:"required,oneof=EUR USD"`
+	Date           string    `json:"date" validate:"required"`
+	Covers         int       `json:"covers"`
+	Table          string    `json:"table"`
+	Invoice        int       `json:"invoice"`
+	TotalDiscount  float64   `json:"total_discount"`
+	Mode           string    `json:"mode"`
+	PartnerName    string    `json:"partner_name" validate:"required"`
+	Merchant       Merchant  `json:"merchant" validate:"required"`
+	Store          Store     `json:"store" validate:"required"`
+	Taxes          []Tax     `json:"taxes"`
+	Items          []Item    `json:"items" validate:"required"`
+	Payments       []Payment `json:"payments" validate:"required"`
 }
 
 type Merchant struct {
-	MerchantName string `validate:""`
-	ReferenceID  string `validate:"required"`
-	MerchantID   int    `validate:""`
+	MerchantName string `json:"merchant_name"`
+	ReferenceID  string `json:"reference_id" validate:"required"`
+	MerchantID   int    `json:"merchant_id"`
 }
 
 type Store struct {
-	StoreName         string  `validate:"required"`
-	ReferenceID       string  `validate:"required"`
-	BillingDescriptor string  `validate:"required"`
-	Siret             string  `validate:"required"`
-	CodeApe           string  `validate:""`
-	TvaIntra          string  `validate:""`
-	Address           Address `validate:"required"`
+	StoreName         string  `json:"store_name" validate:"required"`
+	ReferenceID       string  `json:"reference_id" validate:"required"`
+	BillingDescriptor string  `json:"billing_descriptor" validate:"required"`
+	Siret             string  `json:"siret" validate:"required,min=14,max=14"`
+	CodeAPE           string  `json:"code_ape"`
+	TVAIntra          string  `json:"tva_intra"`
+	Address           Address `json:"address" validate:"required"`
+
 }
 
 type Address struct {
-	PostalCode    int    `validate:"required"`
-	StreetAddress string `validate:""`
-	Country       string `validate:""`
-	City          string `validate:""`
-	FullAddress   string `validate:""`
-	Number        int    `validate:""`
+	PostalCode    int    `json:"postal_code" validate:"required"`
+	StreetAddress string `json:"street_address"`
+	Country       string `json:"country"`
+	City          string `json:"city"`
+	FullAddress   string `json:"full_address"`
+	Number        int    `json:"number"`
 }
 
 type Tax struct {
-	Description string  `validate:""`
-	Amount      float64 `validate:"required"`
-	Rate        float64 `validate:"oneof=550 1000 2000"`
+	Description string  `json:"description"`
+	Amount      float64 `json:"amount" validate:"required"`
+	Rate        int     `json:"rate" validate:"oneof=550 1000 2000"`
 }
 
 type Item struct {
-	ReferenceID string    `validate:""`
-	Name        string    `validate:"required"`
-	Description string    `validate:""`
-	Type        string    `validate:""`
-	Quantity    int       `validate:"required"`
-	Price       float64   `validate:"required"`
-	Discount    float64   `validate:""`
-	TotalAmount float64   `validate:""`
-	Tax         Tax       `validate:"required"`
-	Subitems    []Subitem `validate:""`
+	ReferenceID string    `json:"reference_id"`
+	Name        string    `json:"name" validate:"required"`
+	Description string    `json:"description"`
+	Type        string    `json:"type"`
+	Quantity    int       `json:"quantity" validate:"required"`
+	Price       float64   `json:"price" validate:"required"`
+	Discount    float64   `json:"discount"`
+	TotalAmount float64   `json:"total_amount"`
+	Tax         Tax       `json:"tax" validate:"required"`
+	SubItems    []SubItem `json:"subitems"`
 }
 
-type Subitem struct {
-	ReferenceID string  `validate:""`
-	Name        string  `validate:"required"`
-	Description string  `validate:""`
-	Quantity    int     `validate:""`
-	Price       float64 `validate:""`
-	Discount    float64 `validate:""`
-	TotalAmount float64 `validate:""`
-	Tax         Tax     `validate:"required"`
+type SubItem struct {
+	ReferenceID string  `json:"reference_id"`
+	Name        string  `json:"name" validate:"required"`
+	Description string  `json:"description"`
+	Quantity    int     `json:"quantity"`
+	Price       float64 `json:"price"`
+	Discount    float64 `json:"discount"`
+	TotalAmount float64 `json:"total_amount"`
+	Tax         Tax     `json:"tax"`
+
 }
 
 func ValidateTransactionPayload(data []byte) bool {
@@ -128,11 +132,17 @@ func ValidateTransactionPayload(data []byte) bool {
 
 func ValidateReceiptPayload(data []byte) bool {
 	var receipt ReceiptPayload
+	fmt.Println("qsfpjjkfsjklsfjklsfd")
 	if err := json.Unmarshal(data, &receipt); err != nil {
+		fmt.Println(err)
 		return false
 	}
+
 	err := validate.Struct(receipt)
+	fmt.Println(err)
 	if err != nil {
+		//print error
+		fmt.Println(err)
 		return false
 	}
 	return true

@@ -3,6 +3,7 @@ module github.com/killbillsdev/go_sdk
 go 1.19
 
 require github.com/go-playground/validator/v10 v10.15.0
+require github.com/joho/godotenv v1.3.0
 
 require (
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
