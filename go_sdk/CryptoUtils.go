@@ -8,6 +8,6 @@ import (
 
 func CipherHmacPayload(payload string, hmacKey string) string {
 	h := hmac.New(sha256.New, []byte(hmacKey))
-	h.Write([]byte(payload))
+	_, _ = h.Write([]byte(payload)) // Ignoring Write errors for simplicity
 	return hex.EncodeToString(h.Sum(nil))
 }
